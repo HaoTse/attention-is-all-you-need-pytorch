@@ -135,8 +135,10 @@ def train(model, training_data, validation_data, optimizer, device, opt):
     log_valid_file = None
 
     if opt.log:
-        log_train_file = opt.log + '.train.log'
-        log_valid_file = opt.log + '.valid.log'
+        log_train_file = os.path.join('log',
+                f'{opt.batch_size}_{opt.d_model}_{opt.d_inner_hid}_{opt.log}.train.log')
+        log_valid_file = os.path.join('log',
+                f'{opt.batch_size}_{opt.d_model}_{opt.d_inner_hid}_{opt.log}.valid.log')
 
         print('[Info] Training performance will be written to file: {} and {}'.format(
             log_train_file, log_valid_file))
@@ -173,11 +175,10 @@ def train(model, training_data, validation_data, optimizer, device, opt):
             'epoch': epoch_i}
 
         if opt.save_model:
+            model_name = f'{opt.batch_size}_{opt.d_model}_{opt.d_inner_hid}_{opt.save_model}_epoch_{epoch_i}.chkpt'
             if opt.save_mode == 'all':
-                model_name = opt.save_model + '_accu_{accu:3.3f}.chkpt'.format(accu=100*valid_accu)
                 torch.save(checkpoint, os.path.join('model', model_name))
             elif opt.save_mode == 'best':
-                model_name = opt.save_model + '.chkpt'
                 if valid_accu >= max(valid_accus):
                     torch.save(checkpoint, os.path.join('model', model_name))
                     print('    - [Info] The checkpoint file has been updated.')
