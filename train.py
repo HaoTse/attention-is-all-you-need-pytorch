@@ -12,6 +12,7 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 import torch.utils.data
+import torch.nn as nn
 import transformer.Constants as Constants
 from dataset import TranslationDataset, paired_collate_fn
 from transformer.Models import Transformer
@@ -198,13 +199,10 @@ def main():
 
     parser.add_argument('-epoch', type=int, default=10)
     parser.add_argument('-batch_size', type=int, default=64)
-    # parser.add_argument('-batch_size', type=int, default=4)
 
     #parser.add_argument('-d_word_vec', type=int, default=512)
     parser.add_argument('-d_model', type=int, default=512)
-    # parser.add_argument('-d_model', type=int, default=128)
     parser.add_argument('-d_inner_hid', type=int, default=2048)
-    # parser.add_argument('-d_inner_hid', type=int, default=512)
     parser.add_argument('-d_k', type=int, default=64)
     parser.add_argument('-d_v', type=int, default=64)
 
@@ -258,6 +256,7 @@ def main():
         n_layers=opt.n_layers,
         n_head=opt.n_head,
         dropout=opt.dropout).to(device)
+    transformer = nn.DataParallel(transformer)
 
     optimizer = ScheduledOptim(
         optim.Adam(
