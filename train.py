@@ -5,6 +5,7 @@ This script handling the training process.
 import argparse
 import math
 import time
+import os
 
 from tqdm import tqdm
 import torch
@@ -173,11 +174,11 @@ def train(model, training_data, validation_data, optimizer, device, opt):
         if opt.save_model:
             if opt.save_mode == 'all':
                 model_name = opt.save_model + '_accu_{accu:3.3f}.chkpt'.format(accu=100*valid_accu)
-                torch.save(checkpoint, model_name)
+                torch.save(checkpoint, os.path.join('model', model_name))
             elif opt.save_mode == 'best':
                 model_name = opt.save_model + '.chkpt'
                 if valid_accu >= max(valid_accus):
-                    torch.save(checkpoint, model_name)
+                    torch.save(checkpoint, os.path.join('model', model_name))
                     print('    - [Info] The checkpoint file has been updated.')
 
         if log_train_file and log_valid_file:
@@ -197,10 +198,13 @@ def main():
 
     parser.add_argument('-epoch', type=int, default=10)
     parser.add_argument('-batch_size', type=int, default=64)
+    # parser.add_argument('-batch_size', type=int, default=4)
 
     #parser.add_argument('-d_word_vec', type=int, default=512)
     parser.add_argument('-d_model', type=int, default=512)
+    # parser.add_argument('-d_model', type=int, default=128)
     parser.add_argument('-d_inner_hid', type=int, default=2048)
+    # parser.add_argument('-d_inner_hid', type=int, default=512)
     parser.add_argument('-d_k', type=int, default=64)
     parser.add_argument('-d_v', type=int, default=64)
 
@@ -273,6 +277,7 @@ def prepare_dataloaders(data, opt):
             src_insts=data['train']['src'],
             tgt_insts=data['train']['tgt']),
         num_workers=2,
+        # num_workers=0,
         batch_size=opt.batch_size,
         collate_fn=paired_collate_fn,
         shuffle=True)
@@ -284,6 +289,7 @@ def prepare_dataloaders(data, opt):
             src_insts=data['valid']['src'],
             tgt_insts=data['valid']['tgt']),
         num_workers=2,
+        # num_workers=0,
         batch_size=opt.batch_size,
         collate_fn=paired_collate_fn)
     return train_loader, valid_loader

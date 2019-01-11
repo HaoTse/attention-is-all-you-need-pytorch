@@ -101,3 +101,18 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# vscode setting
+.vscode/
+
+# pytlint setting
+.pylintrc
+
+# models
+model/
+
+# datas
+data/
+
+# logs
+log/

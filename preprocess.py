@@ -2,6 +2,7 @@
 import argparse
 import torch
 import transformer.Constants as Constants
+import os
 
 def read_instances_from_file(inst_file, max_sent_len, keep_case):
     ''' Convert file into word seq lists and vocab '''
@@ -69,12 +70,10 @@ def main():
     ''' Main function '''
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-train_src', required=True)
-    parser.add_argument('-train_tgt', required=True)
-    parser.add_argument('-valid_src', required=True)
-    parser.add_argument('-valid_tgt', required=True)
+    parser.add_argument('-train_path', required=True)
+    parser.add_argument('-valid_path', required=True)
     parser.add_argument('-save_data', required=True)
-    parser.add_argument('-max_len', '--max_word_seq_len', type=int, default=50)
+    parser.add_argument('-max_len', '--max_word_seq_len', type=int, default=100)
     parser.add_argument('-min_word_count', type=int, default=5)
     parser.add_argument('-keep_case', action='store_true')
     parser.add_argument('-share_vocab', action='store_true')
@@ -85,9 +84,9 @@ def main():
 
     # Training set
     train_src_word_insts = read_instances_from_file(
-        opt.train_src, opt.max_word_seq_len, opt.keep_case)
+        os.path.join(opt.train_path, 'short_text.txt'), opt.max_word_seq_len, opt.keep_case)
     train_tgt_word_insts = read_instances_from_file(
-        opt.train_tgt, opt.max_word_seq_len, opt.keep_case)
+        os.path.join(opt.train_path, 'summary.txt'), opt.max_word_seq_len, opt.keep_case)
 
     if len(train_src_word_insts) != len(train_tgt_word_insts):
         print('[Warning] The training instance count is not equal.')
@@ -101,9 +100,9 @@ def main():
 
     # Validation set
     valid_src_word_insts = read_instances_from_file(
-        opt.valid_src, opt.max_word_seq_len, opt.keep_case)
+        os.path.join(opt.valid_path, 'short_text.txt'), opt.max_word_seq_len, opt.keep_case)
     valid_tgt_word_insts = read_instances_from_file(
-        opt.valid_tgt, opt.max_word_seq_len, opt.keep_case)
+        os.path.join(opt.valid_path, 'summary.txt'), opt.max_word_seq_len, opt.keep_case)
 
     if len(valid_src_word_insts) != len(valid_tgt_word_insts):
         print('[Warning] The validation instance count is not equal.')
