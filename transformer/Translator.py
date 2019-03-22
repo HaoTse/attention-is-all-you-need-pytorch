@@ -32,6 +32,8 @@ class Translator(object):
             n_layers=model_opt.n_layers,
             n_head=model_opt.n_head,
             dropout=model_opt.dropout)
+        # using Dataparallel because training used
+        model = nn.DataParallel(model)
 
         model.load_state_dict(checkpoint['model'])
         print('[Info] Trained model state loaded.')
@@ -40,7 +42,8 @@ class Translator(object):
 
         model = model.to(self.device)
 
-        self.model = model
+        # save the module of Dataparallel
+        self.model = model.module
         self.model.eval()
 
     def translate_batch(self, src_seq, src_pos):
