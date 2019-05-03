@@ -42,15 +42,15 @@ class Beam():
 
     def advance(self, word_prob):
         "Update beam status and check if finished or not."
-        num_words = word_prob.size(1)
+        num_words = word_prob.size(1) # word_prob => [b_m, vocab_size]
 
         # Sum the previous scores.
         if len(self.prev_ks) > 0:
-            beam_lk = word_prob + self.scores.unsqueeze(1).expand_as(word_prob)
+            beam_lk = word_prob + self.scores.unsqueeze(1).expand_as(word_prob) # broadcast `self.scores` to size of `word_prob`
         else:
             beam_lk = word_prob[0]
 
-        flat_beam_lk = beam_lk.view(-1)
+        flat_beam_lk = beam_lk.view(-1) # [b_m, voac_size] => [b_m * voac_size]
 
         best_scores, best_scores_id = flat_beam_lk.topk(self.size, 0, True, True) # 1st sort
         best_scores, best_scores_id = flat_beam_lk.topk(self.size, 0, True, True) # 2nd sort

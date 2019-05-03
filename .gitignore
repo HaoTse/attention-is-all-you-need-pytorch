@@ -116,3 +116,6 @@ data/
 
 # logs
 log/
+
+# result
+result/
