@@ -136,9 +136,9 @@ def train(model, training_data, validation_data, optimizer, device, opt):
 
     if opt.log:
         log_train_file = os.path.join('log',
-                f'{opt.batch_size}_{opt.d_model}_{opt.d_inner_hid}_{opt.log}.train.log')
+                f'{opt.d_model}_{opt.d_inner_hid}_{opt.d_k}_{opt.n_head}_{opt.n_layers}_{opt.log}.train.log')
         log_valid_file = os.path.join('log',
-                f'{opt.batch_size}_{opt.d_model}_{opt.d_inner_hid}_{opt.log}.valid.log')
+                f'{opt.d_model}_{opt.d_inner_hid}_{opt.d_k}_{opt.n_head}_{opt.n_layers}_{opt.log}.valid.log')
 
         print('[Info] Training performance will be written to file: {} and {}'.format(
             log_train_file, log_valid_file))
@@ -175,7 +175,7 @@ def train(model, training_data, validation_data, optimizer, device, opt):
             'epoch': epoch_i}
 
         if opt.save_model:
-            model_name = f'{opt.batch_size}_{opt.d_model}_{opt.d_inner_hid}_{opt.save_model}_epoch_{epoch_i}.chkpt'
+            model_name = f'{opt.d_model}_{opt.d_inner_hid}_{opt.d_k}_{opt.n_head}_{opt.n_layers}_{opt.save_model}_epoch_{epoch_i}.chkpt'
             if opt.save_mode == 'all':
                 torch.save(checkpoint, os.path.join('model', model_name))
             elif opt.save_mode == 'best':
@@ -198,16 +198,20 @@ def main():
 
     parser.add_argument('-data', required=True)
 
-    parser.add_argument('-epoch', type=int, default=10)
+    parser.add_argument('-epoch', type=int, default=3)
     parser.add_argument('-batch_size', type=int, default=64)
 
     #parser.add_argument('-d_word_vec', type=int, default=512)
-    parser.add_argument('-d_model', type=int, default=512)
-    parser.add_argument('-d_inner_hid', type=int, default=2048)
+    parser.add_argument('-d_model', type=int, default=1024)
+    # parser.add_argument('-d_model', type=int, default=512)
+    parser.add_argument('-d_inner_hid', type=int, default=4096)
+    # parser.add_argument('-d_inner_hid', type=int, default=4096)
     parser.add_argument('-d_k', type=int, default=64)
     parser.add_argument('-d_v', type=int, default=64)
 
+    # parser.add_argument('-n_head', type=int, default=12)
     parser.add_argument('-n_head', type=int, default=8)
+    # parser.add_argument('-n_layers', type=int, default=12)
     parser.add_argument('-n_layers', type=int, default=6)
     parser.add_argument('-n_warmup_steps', type=int, default=4000)
 
@@ -225,6 +229,7 @@ def main():
     opt = parser.parse_args()
     opt.cuda = not opt.no_cuda
     opt.d_word_vec = opt.d_model
+    opt.log = opt.save_model
 
     #========= Loading Dataset =========#
     data = torch.load(opt.data)
