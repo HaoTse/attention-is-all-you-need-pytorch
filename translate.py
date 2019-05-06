@@ -41,7 +41,8 @@ def main():
     test_src_word_insts = read_instances_from_file(
         opt.src,
         preprocess_settings.max_word_seq_len,
-        preprocess_settings.keep_case)
+        preprocess_settings.keep_case,
+        preprocess_settings.mode)
     test_src_insts = convert_instance_to_idx_seq(
         test_src_word_insts, preprocess_data['dict']['src'])
 

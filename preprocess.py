@@ -4,7 +4,7 @@ import torch
 import transformer.Constants as Constants
 import os
 
-def read_instances_from_file(inst_file, max_sent_len, keep_case):
+def read_instances_from_file(inst_file, max_sent_len, keep_case, mode=None):
     ''' Convert file into word seq lists and vocab '''
 
     word_insts = []
@@ -13,6 +13,11 @@ def read_instances_from_file(inst_file, max_sent_len, keep_case):
         for sent in f:
             if not keep_case:
                 sent = sent.lower()
+
+            if mode == 'char':
+                sent = [w for w in sent if w.strip()]
+                sent = ' '.join(sent)
+
             words = sent.split()
             if len(words) > max_sent_len:
                 trimmed_sent_count += 1
@@ -78,15 +83,18 @@ def main():
     parser.add_argument('-keep_case', action='store_true')
     parser.add_argument('-share_vocab', action='store_true')
     parser.add_argument('-vocab', default=None)
+    parser.add_argument('-mode', type=str, choices=['word', 'char'], default='word')
 
     opt = parser.parse_args()
     opt.max_token_seq_len = opt.max_word_seq_len + 2 # include the <s> and </s>
 
     # Training set
     train_src_word_insts = read_instances_from_file(
-        os.path.join(opt.train_path, 'short_text_t.txt'), opt.max_word_seq_len, opt.keep_case)
+        os.path.join(opt.train_path, 'oracle_short_text.txt'), opt.max_word_seq_len, opt.keep_case, opt.mode)
+        # os.path.join(opt.train_path, 'short_text.txt'), opt.max_word_seq_len, opt.keep_case)
     train_tgt_word_insts = read_instances_from_file(
-        os.path.join(opt.train_path, 'summary_t.txt'), opt.max_word_seq_len, opt.keep_case)
+        os.path.join(opt.train_path, 'oracle_summary.txt'), opt.max_word_seq_len, opt.keep_case, opt.mode)
+        # os.path.join(opt.train_path, 'summary.txt'), opt.max_word_seq_len, opt.keep_case)
 
     if len(train_src_word_insts) != len(train_tgt_word_insts):
         print('[Warning] The training instance count is not equal.')
@@ -100,9 +108,11 @@ def main():
 
     # Validation set
     valid_src_word_insts = read_instances_from_file(
-        os.path.join(opt.valid_path, 'short_text_t.txt'), opt.max_word_seq_len, opt.keep_case)
+        os.path.join(opt.valid_path, 'oracle_short_text.txt'), opt.max_word_seq_len, opt.keep_case, opt.mode)
+        # os.path.join(opt.valid_path, 'short_text.txt'), opt.max_word_seq_len, opt.keep_case)
     valid_tgt_word_insts = read_instances_from_file(
-        os.path.join(opt.valid_path, 'summary_t.txt'), opt.max_word_seq_len, opt.keep_case)
+        os.path.join(opt.valid_path, 'oracle_summary.txt'), opt.max_word_seq_len, opt.keep_case, opt.mode)
+        # os.path.join(opt.valid_path, 'summary.txt'), opt.max_word_seq_len, opt.keep_case)
 
     if len(valid_src_word_insts) != len(valid_tgt_word_insts):
         print('[Warning] The validation instance count is not equal.')
