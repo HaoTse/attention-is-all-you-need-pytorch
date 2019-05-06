@@ -136,13 +136,13 @@ class Translator(object):
 
         with torch.no_grad():
             #-- Encode
-            src_seq, src_pos = src_seq.to(self.device), src_pos.to(self.device)
-            src_enc, *_ = self.model.encoder(src_seq, src_pos)
+            src_seq, src_pos = src_seq.to(self.device), src_pos.to(self.device) # [n_inst * len_s]
+            src_enc, *_ = self.model.encoder(src_seq, src_pos) # [n_inst * len_s * d_h]
 
             #-- Repeat data for beam search
             n_bm = self.opt.beam_size
             n_inst, len_s, d_h = src_enc.size()
-            src_seq = src_seq.repeat(1, n_bm).view(n_inst * n_bm, len_s)
+            src_seq = src_seq.repeat(1, n_bm).view(n_inst * n_bm, len_s) # [n_inst , len_s * n_bm] => [n_inst * n_bm, len_s]
             src_enc = src_enc.repeat(1, n_bm, 1).view(n_inst * n_bm, len_s, d_h)
 
             #-- Prepare beams
