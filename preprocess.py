@@ -93,7 +93,7 @@ def main():
         os.path.join(opt.train_path, 'oracle_short_text.txt'), opt.max_word_seq_len, opt.keep_case, opt.mode)
         # os.path.join(opt.train_path, 'short_text.txt'), opt.max_word_seq_len, opt.keep_case)
     train_tgt_word_insts = read_instances_from_file(
-        os.path.join(opt.train_path, 'oracle_summary.txt'), opt.max_word_seq_len, opt.keep_case, opt.mode)
+        os.path.join(opt.train_path, 'extract_summary.txt'), opt.max_word_seq_len, opt.keep_case, opt.mode)
         # os.path.join(opt.train_path, 'summary.txt'), opt.max_word_seq_len, opt.keep_case)
 
     if len(train_src_word_insts) != len(train_tgt_word_insts):
@@ -108,10 +108,10 @@ def main():
 
     # Validation set
     valid_src_word_insts = read_instances_from_file(
-        os.path.join(opt.valid_path, 'oracle_short_text.txt'), opt.max_word_seq_len, opt.keep_case, opt.mode)
+        os.path.join(opt.valid_path, 'extract_short_text.txt'), opt.max_word_seq_len, opt.keep_case, opt.mode)
         # os.path.join(opt.valid_path, 'short_text.txt'), opt.max_word_seq_len, opt.keep_case)
     valid_tgt_word_insts = read_instances_from_file(
-        os.path.join(opt.valid_path, 'oracle_summary.txt'), opt.max_word_seq_len, opt.keep_case, opt.mode)
+        os.path.join(opt.valid_path, 'extract_summary.txt'), opt.max_word_seq_len, opt.keep_case, opt.mode)
         # os.path.join(opt.valid_path, 'summary.txt'), opt.max_word_seq_len, opt.keep_case)
 
     if len(valid_src_word_insts) != len(valid_tgt_word_insts):
